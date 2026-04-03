@@ -1,110 +1,305 @@
-<!DOCTYPE html><html lang="nl"><head>  <meta charset="UTF-8" />  <meta name="viewport" content="width=device-width, initial-scale=1" />  <title>Cashflow Champions – Statistieken</title>  <style>    :root {      --bg: #1f1f1f;      --panel: #2a2a2a;      --panel-2: #313131;      --panel-3: #3a3a3a;      --text: #ffffff;      --muted: #b9b9b9;      --line: #444;      --gold: #ffd700;      --silver: #c0c0c0;      --bronze: #cd7f32;      --green: #4bd46a;      --red: #ff5874;      --blue: #67a8ff;      --purple: #a98bff;      --teal: #4fc7b8;      --orange: #ff9d4d;      --yellow: #f6d55c;      --shadow: 0 10px 30px rgba(0,0,0,0.28);    }
-    * { box-sizing: border-box; }
-    body {      margin: 0;      background: linear-gradient(180deg, #212121 0%, #1b1b1b 100%);      color: var(--text);      font-family: "Segoe UI", Arial, sans-serif;      line-height: 1.4;    }
-    .wrap {      max-width: 1360px;      margin: 0 auto;      padding: 24px 16px 44px;    }
-    h1 {      margin: 0;      font-size: clamp(2rem, 5vw, 3.2rem);      line-height: 1.05;      letter-spacing: 0.02em;    }
-    .subtitle {      margin-top: 8px;      color: var(--muted);      font-size: 1rem;    }
-    .intro {      margin-top: 18px;      color: var(--muted);      max-width: 880px;    }
-    .section {      margin-top: 24px;      background: rgba(255,255,255,0.02);      border: 1px solid rgba(255,255,255,0.05);      border-radius: 22px;      overflow: hidden;      box-shadow: var(--shadow);    }
-    .section-header {      padding: 18px 20px;      border-bottom: 1px solid rgba(255,255,255,0.06);      background: rgba(255,255,255,0.025);      display: flex;      align-items: center;      justify-content: space-between;      gap: 16px;      flex-wrap: wrap;    }
-    .section-title {      margin: 0;      font-size: 1rem;      text-transform: uppercase;      letter-spacing: 0.08em;    }
-    .section-note {      color: var(--muted);      font-size: 0.92rem;    }
-    .section-body {      padding: 18px;    }
-    .stats-grid {      display: grid;      grid-template-columns: repeat(5, minmax(0, 1fr));      gap: 14px;    }
-    .stat-card {      background: var(--panel);      border: 1px solid rgba(255,255,255,0.05);      border-radius: 18px;      padding: 16px;      min-height: 120px;    }
-    .stat-label {      color: var(--muted);      font-size: 0.82rem;      text-transform: uppercase;      letter-spacing: 0.08em;      margin-bottom: 10px;    }
-    .stat-value {      font-size: 1.5rem;      font-weight: 700;      line-height: 1.1;    }
-    .stat-sub {      margin-top: 10px;      color: var(--muted);      font-size: 0.92rem;    }
-    .cards-grid {      display: grid;      grid-template-columns: repeat(4, minmax(0, 1fr));      gap: 16px;    }
-    .team-card {      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));      border: 1px solid rgba(255,255,255,0.06);      border-radius: 22px;      padding: 16px;      box-shadow: var(--shadow);      position: relative;      overflow: hidden;    }
-    .team-card.rank-1 {      grid-column: span 2;      border-color: rgba(255, 215, 0, 0.45);      background: linear-gradient(180deg, rgba(255,215,0,0.12), rgba(255,255,255,0.03));    }
-    .team-card.rank-2 {      border-color: rgba(192,192,192,0.35);      background: linear-gradient(180deg, rgba(192,192,192,0.10), rgba(255,255,255,0.03));    }
-    .team-card.rank-3 {      border-color: rgba(205,127,50,0.35);      background: linear-gradient(180deg, rgba(205,127,50,0.10), rgba(255,255,255,0.03));    }
-    .team-card::after {      content: "";      position: absolute;      inset: auto -30px -30px auto;      width: 110px;      height: 110px;      border-radius: 50%;      background: rgba(255,255,255,0.04);      filter: blur(4px);    }
-    .card-top {      display: flex;      justify-content: space-between;      align-items: flex-start;      gap: 12px;      margin-bottom: 12px;      position: relative;      z-index: 1;    }
-    .rank-pill {      min-width: 64px;      padding: 8px 12px;      border-radius: 999px;      background: rgba(255,255,255,0.08);      font-weight: 700;      text-align: center;      font-size: 0.95rem;    }
-    .change {      font-weight: 700;      font-size: 0.95rem;    }
-    .change.up { color: var(--green); }    .change.down { color: var(--red); }    .change.same { color: var(--muted); }
-    .team-name {      font-size: 1.22rem;      font-weight: 800;      letter-spacing: 0.02em;      margin-bottom: 4px;      position: relative;      z-index: 1;    }
-    .team-meta {      color: var(--muted);      font-size: 0.95rem;      margin-bottom: 14px;      position: relative;      z-index: 1;    }
-    .metrics {      display: grid;      grid-template-columns: repeat(2, minmax(0, 1fr));      gap: 10px;      position: relative;      z-index: 1;    }
-    .metric {      background: rgba(255,255,255,0.04);      border-radius: 14px;      padding: 10px 12px;    }
-    .metric-label {      color: var(--muted);      font-size: 0.76rem;      text-transform: uppercase;      letter-spacing: 0.08em;      margin-bottom: 6px;    }
-    .metric-value {      font-size: 1.18rem;      font-weight: 700;    }
-    .sparkline-wrap {      margin-top: 12px;      position: relative;      z-index: 1;    }
-    .sparkline-label {      color: var(--muted);      font-size: 0.78rem;      text-transform: uppercase;      letter-spacing: 0.08em;      margin-bottom: 6px;    }
-    .chart-grid {      display: grid;      grid-template-columns: 2fr 1fr;      gap: 16px;    }
-    .chart-card {      background: var(--panel);      border: 1px solid rgba(255,255,255,0.05);      border-radius: 18px;      padding: 16px;      min-height: 400px;    }
-    .chart-card h3 {      margin: 0 0 10px;      font-size: 1rem;    }
-    .chart-subtitle {      color: var(--muted);      font-size: 0.92rem;      margin-bottom: 14px;    }
-    .chart-frame {      width: 100%;      min-height: 320px;      overflow: hidden;      border-radius: 14px;      background: #232323;      border: 1px solid rgba(255,255,255,0.04);    }
-    .legend {      display: flex;      flex-wrap: wrap;      gap: 8px 12px;      margin-top: 12px;      color: var(--muted);      font-size: 0.9rem;    }
-    .legend-item {      display: inline-flex;      align-items: center;      gap: 8px;    }
-    .dot {      width: 11px;      height: 11px;      border-radius: 50%;      display: inline-block;      flex: none;    }
-    .bar-table {      display: grid;      gap: 10px;    }
-    .bar-row {      display: grid;      grid-template-columns: minmax(120px, 190px) 1fr 60px 60px;      gap: 10px;      align-items: center;    }
-    .bar-label {      font-size: 0.9rem;      font-weight: 700;    }
-    .bar-track {      height: 16px;      background: #1f1f1f;      border-radius: 999px;      overflow: hidden;      border: 1px solid rgba(255,255,255,0.04);    }
-    .bar-fill {      height: 100%;      border-radius: 999px;    }
-    .bar-value, .bar-rank {      text-align: right;      font-weight: 700;      font-size: 0.92rem;    }
-    .table-scroll {      overflow-x: auto;      border-radius: 14px;      border: 1px solid rgba(255,255,255,0.05);    }
-    table {      width: 100%;      border-collapse: collapse;      min-width: 820px;      background: var(--panel);    }
-    th, td {      padding: 12px 14px;      border-bottom: 1px solid rgba(255,255,255,0.06);      text-align: left;      font-size: 0.94rem;      vertical-align: top;    }
-    th {      background: rgba(255,255,255,0.03);      color: var(--muted);      font-size: 0.82rem;      text-transform: uppercase;      letter-spacing: 0.08em;      position: sticky;      top: 0;    }
-    tr:nth-child(even) td { background: rgba(255,255,255,0.015); }    .nowrap { white-space: nowrap; }
-    .pill {      display: inline-flex;      align-items: center;      padding: 4px 8px;      border-radius: 999px;      background: rgba(255,255,255,0.06);      font-size: 0.82rem;      font-weight: 700;    }
-    .ideas-grid {      display: grid;      grid-template-columns: repeat(3, minmax(0, 1fr));      gap: 14px;    }
-    .idea-card {      background: var(--panel);      border: 1px solid rgba(255,255,255,0.05);      border-radius: 18px;      padding: 16px;    }
-    .idea-title {      margin: 0 0 8px;      font-size: 1rem;    }
-    .idea-body {      color: var(--muted);      font-size: 0.93rem;    }
-    .footer-note {      margin-top: 16px;      color: var(--muted);      font-size: 0.9rem;    }
-    .accent-gold { color: var(--gold); }    .accent-green { color: var(--green); }    .accent-red { color: var(--red); }    .accent-blue { color: var(--blue); }
-    @media (max-width: 1180px) {      .stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }      .cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }      .team-card.rank-1 { grid-column: span 2; }      .chart-grid { grid-template-columns: 1fr; }      .ideas-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }    }
-    @media (max-width: 820px) {      .wrap { padding: 18px 10px 36px; }      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }      .cards-grid { grid-template-columns: 1fr; }      .team-card.rank-1 { grid-column: span 1; }      .metrics { grid-template-columns: 1fr 1fr; }      .bar-row { grid-template-columns: 1fr; }      .bar-value, .bar-rank { text-align: left; }      .ideas-grid { grid-template-columns: 1fr; }    }
-    @media (max-width: 560px) {      .stats-grid { grid-template-columns: 1fr; }      .metrics { grid-template-columns: 1fr; }    }  </style></head><body>  <div class="wrap">    <header>      <h1>Cashflow Champions</h1>      <div class="subtitle" id="pageSubtitle"></div>      <div class="intro">        Offline statistiekenpagina zonder externe libraries. Voeg iedere week alleen een nieuwe ronde met cumulatieve totaalscores toe; alle standen, rondepunten, records en grafieken worden automatisch opnieuw berekend.      </div>    </header>
-    <section class="section">      <div class="section-header">        <h2 class="section-title">Snelle statistieken</h2>        <div class="section-note">Automatisch afgeleid uit de ingevoerde rondedata</div>      </div>      <div class="section-body">        <div class="stats-grid" id="kpiGrid"></div>      </div>    </section>
-    <section class="section">      <div class="section-header">        <h2 class="section-title">Stand als grid van player cards</h2>        <div class="section-note">De positie van de kaart ís de huidige positie in het klassement</div>      </div>      <div class="section-body">        <div class="cards-grid" id="cardsGrid"></div>      </div>    </section>
-    <section class="section">      <div class="section-header">        <h2 class="section-title">Grafieken</h2>        <div class="section-note">Geschikt voor 10+ rondes; de as schaalt automatisch mee</div>      </div>      <div class="section-body">        <div class="chart-grid">          <div class="chart-card">            <h3>Cumulatieve punten door de rondes</h3>            <div class="chart-subtitle">Iedere lijn laat de ontwikkeling van een team zien over alle beschikbare rondes.</div>            <div class="chart-frame" id="lineChart"></div>            <div class="legend" id="lineLegend"></div>          </div>          <div class="chart-card">            <h3 id="latestRoundTitle"></h3>            <div class="chart-subtitle">Punten in alleen de meest recente ronde, plus de ranking binnen die ronde.</div>            <div class="bar-table" id="roundBarTable"></div>          </div>        </div>      </div>    </section>
-    <section class="section">      <div class="section-header">        <h2 class="section-title">Historie per team</h2>        <div class="section-note">Per ronde zie je rondepunten, positie en cumulatief totaal</div>      </div>      <div class="section-body">        <div class="table-scroll">          <table id="historyTable"></table>        </div>      </div>    </section>
-    <section class="section">      <div class="section-header">        <h2 class="section-title">Ideeën voor nóg meer statistieken</h2>        <div class="section-note">Deze kunnen we direct toevoegen zodra je de volgende screenshots blijft sturen</div>      </div>      <div class="section-body">        <div class="ideas-grid" id="ideasGrid"></div>        <div class="footer-note">          Praktisch voor wekelijkse updates: voeg onderaan in <code>DATA.rounds</code> één extra object toe met de nieuwe ronde en de cumulatieve scores uit je screenshot. Dan worden rondepunten en alle afgeleide statistieken vanzelf opnieuw berekend.        </div>      </div>    </section>  </div>
-  <script>    const DATA = {      rounds: [        {          name: "GP Australië",          totals: {            "KNOAL TEMPO TEAM": 229,            "WILD ROLLER COASTERS": 221,            "VONCK RACING": 214,            "ARJAN RACING 007": 194,            "HUNTER RACING TEAM": 116,            "FANNY'S RACING TEAM": 96,            "MTJIRAN": 78          }        },        {          name: "GP China",          totals: {            "VONCK RACING": 473,            "KNOAL TEMPO TEAM": 415,            "ARJAN RACING 007": 411,            "WILD ROLLER COASTERS": 408,            "MTJIRAN": 310,            "FANNY'S RACING TEAM": 289,            "HUNTER RACING TEAM": 267          }        },        {          name: "GP Japan",          totals: {            "VONCK RACING": 623,            "KNOAL TEMPO TEAM": 543,            "WILD ROLLER COASTERS": 538,            "ARJAN RACING 007": 517,            "FANNY'S RACING TEAM": 470,            "HUNTER RACING TEAM": 435,            "MTJIRAN": 371          }        }      ],      palette: [        "#ffd700",        "#c0c0c0",        "#cd7f32",        "#67a8ff",        "#4fc7b8",        "#ff9d4d",        "#a98bff",        "#7bd389",        "#ff7f9f",        "#f6d55c",        "#70d6ff",        "#ffb703"      ]    };
-    function uniqueTeams(rounds) {      const set = new Set();      rounds.forEach(r => Object.keys(r.totals).forEach(t => set.add(t)));      return [...set];    }
-    function sortDescByValue(mapObj) {      return Object.entries(mapObj)        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));    }
-    function buildRoundMeta(rounds, teams) {      return rounds.map((round, index) => {        const prevTotals = index === 0 ? {} : rounds[index - 1].totals;        const roundScores = {};        teams.forEach(team => {          const current = round.totals[team] || 0;          const previous = prevTotals[team] || 0;          roundScores[team] = current - previous;        });
-        const cumulativeRanking = sortDescByValue(Object.fromEntries(teams.map(t => [t, round.totals[t] || 0]))).map(([team]) => team);        const roundRanking = sortDescByValue(roundScores).map(([team]) => team);
-        const cumulativePosition = {};        const roundPosition = {};        cumulativeRanking.forEach((team, i) => cumulativePosition[team] = i + 1);        roundRanking.forEach((team, i) => roundPosition[team] = i + 1);
-        const previousPosition = index === 0 ? null : buildPositionMap(rounds[index - 1].totals, teams);        const positionChange = {};        teams.forEach(team => {          if (!previousPosition) {            positionChange[team] = 0;          } else {            positionChange[team] = previousPosition[team] - cumulativePosition[team];          }        });
-        return {          name: round.name,          totals: round.totals,          roundScores,          cumulativeRanking,          cumulativePosition,          roundRanking,          roundPosition,          positionChange        };      });    }
-    function buildPositionMap(totals, teams) {      const sorted = sortDescByValue(Object.fromEntries(teams.map(t => [t, totals[t] || 0])));      const map = {};      sorted.forEach(([team], i) => map[team] = i + 1);      return map;    }
-    function getTeamColor(index) {      return DATA.palette[index % DATA.palette.length];    }
-    function formatChange(change) {      if (change > 0) return { text: `▲ ${change}`, className: 'up' };      if (change < 0) return { text: `▼ ${Math.abs(change)}`, className: 'down' };      return { text: '• 0', className: 'same' };    }
-    function rankSuffix(rank) {      return `#${rank}`;    }
-    function mean(values) {      if (!values.length) return 0;      return values.reduce((a, b) => a + b, 0) / values.length;    }
-    function stdDev(values) {      if (values.length <= 1) return 0;      const avg = mean(values);      const variance = mean(values.map(v => (v - avg) ** 2));      return Math.sqrt(variance);    }
-    const teams = uniqueTeams(DATA.rounds);    const roundMeta = buildRoundMeta(DATA.rounds, teams);    const lastRound = roundMeta[roundMeta.length - 1];    const previousRound = roundMeta.length > 1 ? roundMeta[roundMeta.length - 2] : null;    const overallTeams = lastRound.cumulativeRanking;    const teamColors = Object.fromEntries(overallTeams.map((team, i) => [team, getTeamColor(i)]));
-    document.getElementById('pageSubtitle').textContent = `Stand t/m ${lastRound.name} • ${DATA.rounds.length} rondes in beeld`;    document.getElementById('latestRoundTitle').textContent = `Rondepunten in ${lastRound.name}`;
-    function renderKPIs() {      const latestLeader = lastRound.cumulativeRanking[0];      const latestLeaderGap = (lastRound.totals[latestLeader] || 0) - (lastRound.totals[lastRound.cumulativeRanking[1]] || 0);      const latestRoundWinner = lastRound.roundRanking[0];      const bestRoundEver = (() => {        let best = { team: null, round: null, points: -Infinity };        roundMeta.forEach(round => {          teams.forEach(team => {            const value = round.roundScores[team];            if (value > best.points) best = { team, round: round.name, points: value };          });        });        return best;      })();
-      const biggestClimbEver = (() => {        let best = { team: null, round: null, delta: -Infinity };        roundMeta.forEach(round => {          teams.forEach(team => {            const delta = round.positionChange[team];            if (delta > best.delta) best = { team, round: round.name, delta };          });        });        return best;      })();
-      const closestBattle = (() => {        let best = null;        for (let i = 0; i < lastRound.cumulativeRanking.length - 1; i++) {          const a = lastRound.cumulativeRanking[i];          const b = lastRound.cumulativeRanking[i + 1];          const gap = (lastRound.totals[a] || 0) - (lastRound.totals[b] || 0);          if (!best || gap < best.gap) best = { a, b, gap };        }        return best;      })();
-      const items = [        {          label: 'Leider nu',          value: latestLeader,          sub: `${lastRound.totals[latestLeader]} punten • voorsprong ${latestLeaderGap}`        },        {          label: `Winnaar ${lastRound.name}`,          value: latestRoundWinner,          sub: `${lastRound.roundScores[latestRoundWinner]} punten in deze ronde`        },        {          label: 'Beste ronde ooit',          value: `${bestRoundEver.points} punten`,          sub: `${bestRoundEver.team} in ${bestRoundEver.round}`        },        {          label: 'Grootste stijging ooit',          value: biggestClimbEver.delta > 0 ? `▲ ${biggestClimbEver.delta}` : '–',          sub: biggestClimbEver.delta > 0 ? `${biggestClimbEver.team} in ${biggestClimbEver.round}` : 'Nog geen stijging gemeten'        },        {          label: 'Spannendste duel nu',          value: `${closestBattle.gap} punten`,          sub: `${closestBattle.a} vs ${closestBattle.b}`        }      ];
-      document.getElementById('kpiGrid').innerHTML = items.map(item => `        <div class="stat-card">          <div class="stat-label">${item.label}</div>          <div class="stat-value">${item.value}</div>          <div class="stat-sub">${item.sub}</div>        </div>      `).join('');    }
-    function renderCards() {      const html = overallTeams.map((team, index) => {        const currentTotal = lastRound.totals[team] || 0;        const roundPoints = lastRound.roundScores[team] || 0;        const roundRank = lastRound.roundPosition[team];        const overallRank = lastRound.cumulativePosition[team];        const change = formatChange(lastRound.positionChange[team]);        const series = roundMeta.map(r => r.totals[team] || 0);        const avgRound = mean(roundMeta.map(r => r.roundScores[team] || 0));        const bestRound = Math.max(...roundMeta.map(r => r.roundScores[team] || 0));        const spark = buildSparkline(series, teamColors[team]);
-        return `          <article class="team-card rank-${overallRank}">            <div class="card-top">              <div class="rank-pill">${rankSuffix(overallRank)}</div>              <div class="change ${change.className}">${change.text}</div>            </div>            <div class="team-name">${team}</div>            <div class="team-meta">Cumulatief ${currentTotal} punten</div>            <div class="metrics">              <div class="metric">                <div class="metric-label">Deze ronde</div>                <div class="metric-value">${roundPoints}</div>              </div>              <div class="metric">                <div class="metric-label">Rondepositie</div>                <div class="metric-value">${rankSuffix(roundRank)}</div>              </div>              <div class="metric">                <div class="metric-label">Gem. per ronde</div>                <div class="metric-value">${avgRound.toFixed(1)}</div>              </div>              <div class="metric">                <div class="metric-label">Beste ronde</div>                <div class="metric-value">${bestRound}</div>              </div>            </div>            <div class="sparkline-wrap">              <div class="sparkline-label">Trend cumulatief</div>              ${spark}            </div>          </article>        `;      }).join('');
-      document.getElementById('cardsGrid').innerHTML = html;    }
-    function buildSparkline(series, color) {      const width = 260;      const height = 60;      const pad = 6;      const min = Math.min(...series);      const max = Math.max(...series);      const range = max - min || 1;      const points = series.map((value, i) => {        const x = pad + (i * (width - pad * 2) / Math.max(series.length - 1, 1));        const y = height - pad - ((value - min) / range) * (height - pad * 2);        return `${x},${y}`;      }).join(' ');      const last = series[series.length - 1];      const lastX = pad + ((series.length - 1) * (width - pad * 2) / Math.max(series.length - 1, 1));      const lastY = height - pad - ((last - min) / range) * (height - pad * 2);
-      return `        <svg viewBox="0 0 ${width} ${height}" width="100%" height="60" aria-hidden="true">          <polyline fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="1" points="${points}"></polyline>          <polyline fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${points}"></polyline>          <circle cx="${lastX}" cy="${lastY}" r="4" fill="${color}"></circle>        </svg>      `;    }
-    function renderLineChart() {      const width = 920;      const height = 380;      const margin = { top: 20, right: 24, bottom: 48, left: 54 };      const innerW = width - margin.left - margin.right;      const innerH = height - margin.top - margin.bottom;      const values = teams.flatMap(team => roundMeta.map(round => round.totals[team] || 0));      const minY = 0;      const maxY = Math.max(...values, 1);      const yTicks = 5;
-      const xFor = index => margin.left + (index * innerW / Math.max(roundMeta.length - 1, 1));      const yFor = value => margin.top + innerH - ((value - minY) / Math.max(maxY - minY, 1)) * innerH;
-      let svg = `<svg viewBox="0 0 ${width} ${height}" width="100%" height="100%" aria-label="Cumulatieve punten chart">`;
-      for (let i = 0; i <= yTicks; i++) {        const value = Math.round((maxY / yTicks) * i);        const y = yFor(value);        svg += `<line x1="${margin.left}" y1="${y}" x2="${width - margin.right}" y2="${y}" stroke="rgba(255,255,255,0.08)" stroke-width="1"></line>`;        svg += `<text x="${margin.left - 10}" y="${y + 4}" text-anchor="end" fill="#b9b9b9" font-size="12">${value}</text>`;      }
-      roundMeta.forEach((round, i) => {        const x = xFor(i);        svg += `<line x1="${x}" y1="${margin.top}" x2="${x}" y2="${height - margin.bottom}" stroke="rgba(255,255,255,0.05)" stroke-width="1"></line>`;        svg += `<text x="${x}" y="${height - 16}" text-anchor="middle" fill="#b9b9b9" font-size="12">${escapeHtml(round.name)}</text>`;      });
-      overallTeams.forEach(team => {        const color = teamColors[team];        const pts = roundMeta.map((round, i) => `${xFor(i)},${yFor(round.totals[team] || 0)}`).join(' ');        svg += `<polyline fill="none" stroke="${color}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="${pts}"></polyline>`;        roundMeta.forEach((round, i) => {          const x = xFor(i);          const y = yFor(round.totals[team] || 0);          svg += `<circle cx="${x}" cy="${y}" r="4" fill="${color}"></circle>`;        });      });
-      svg += `</svg>`;      document.getElementById('lineChart').innerHTML = svg;      document.getElementById('lineLegend').innerHTML = overallTeams.map(team => `        <span class="legend-item"><span class="dot" style="background:${teamColors[team]}"></span>${team}</span>      `).join('');    }
-    function renderRoundBars() {      const max = Math.max(...Object.values(lastRound.roundScores), 1);      const rows = lastRound.roundRanking.map(team => {        const value = lastRound.roundScores[team];        const widthPct = (value / max) * 100;        return `          <div class="bar-row">            <div class="bar-label">${team}</div>            <div class="bar-track"><div class="bar-fill" style="width:${widthPct}%; background:${teamColors[team]}"></div></div>            <div class="bar-value">${value}</div>            <div class="bar-rank">${rankSuffix(lastRound.roundPosition[team])}</div>          </div>        `;      }).join('');      document.getElementById('roundBarTable').innerHTML = rows;    }
-    function renderHistoryTable() {      const headCells = ['Team'];      roundMeta.forEach(round => {        headCells.push(`${round.name}<br><span style="font-weight:400; color:#9f9f9f">Ronde</span>`);        headCells.push(`${round.name}<br><span style="font-weight:400; color:#9f9f9f">Pos.</span>`);        headCells.push(`${round.name}<br><span style="font-weight:400; color:#9f9f9f">Totaal</span>`);      });
-      const thead = `<thead><tr>${headCells.map((c, i) => `<th${i === 0 ? ' class="nowrap"' : ''}>${c}</th>`).join('')}</tr></thead>`;      const tbody = `<tbody>${overallTeams.map(team => {        const cells = [`<td class="nowrap"><strong>${team}</strong></td>`];        roundMeta.forEach(round => {          cells.push(`<td>${round.roundScores[team] || 0}</td>`);          cells.push(`<td><span class="pill">#${round.cumulativePosition[team]}</span></td>`);          cells.push(`<td>${round.totals[team] || 0}</td>`);        });        return `<tr>${cells.join('')}</tr>`;      }).join('')}</tbody>`;
-      document.getElementById('historyTable').innerHTML = thead + tbody;    }
-    function renderIdeas() {      const ideas = [        { title: 'Beste comeback', body: 'Grootste sprong omhoog in het algemeen klassement.' },        { title: 'Most consistent', body: 'Team met de laagste spreiding in rondepunten.' },        { title: 'Podiumteller', body: 'Hoe vaak een team in de top 3 eindigde.' }      ];
-      document.getElementById('ideasGrid').innerHTML = ideas.map(item => `        <div class="idea-card">          <h3 class="idea-title">${item.title}</h3>          <div class="idea-body">${item.body}</div>        </div>      `).join('');    }
-    function escapeHtml(text) {      return String(text)        .replace(/&/g, '&amp;')        .replace(/</g, '&lt;')        .replace(/>/g, '&gt;')        .replace(/"/g, '&quot;')        .replace(/'/g, '&#039;');    }
-    renderKPIs();    renderCards();    renderLineChart();    renderRoundBars();    renderHistoryTable();    renderIdeas();  </script></body></html>
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cashflow Champions | F1 Manager Stats</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --f1-red: #e10600;
+            --f1-black: #0b0e11;
+            --f1-dark: #15191e;
+            --f1-glass: rgba(255, 255, 255, 0.05);
+            --f1-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--f1-black);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            background-image: radial-gradient(circle at top right, #1a202c, #0b0e11);
+            min-height: 100vh;
+        }
+
+        .f1-font { font-family: 'Orbitron', sans-serif; }
+        
+        .glass-panel {
+            background: var(--f1-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--f1-border);
+            border-radius: 12px;
+        }
+
+        .card-rank-1 { border-left: 4px solid #ffd700; background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent); }
+        .card-rank-2 { border-left: 4px solid #c0c0c0; }
+        .card-rank-3 { border-left: 4px solid #cd7f32; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--f1-black); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--f1-red); }
+
+        .mode-active { background-color: var(--f1-red) !important; color: white !important; }
+        
+        .hidden-mode { display: none !important; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto">
+        <!-- HEADER SECTION -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+            <div>
+                <h1 class="f1-font text-4xl md:text-5xl font-black italic tracking-tighter">
+                    CASHFLOW <span class="text-[--f1-red]">CHAMPIONS</span>
+                </h1>
+                <p id="pageSubtitle" class="text-gray-400 mt-2 uppercase tracking-[0.2em] text-xs font-bold">Laden van paddock data...</p>
+            </div>
+
+            <!-- MODE SELECTOR -->
+            <div class="flex bg-gray-900 p-1 rounded-full border border-gray-700 shadow-xl">
+                <button onclick="setUIMode('easy')" id="btn-easy" class="px-6 py-2 rounded-full text-xs font-bold transition-all hover:bg-gray-800">EASY</button>
+                <button onclick="setUIMode('medium')" id="btn-medium" class="px-6 py-2 rounded-full text-xs font-bold transition-all hover:bg-gray-800 mode-active">MEDIUM</button>
+                <button onclick="setUIMode('pro')" id="btn-pro" class="px-6 py-2 rounded-full text-xs font-bold transition-all hover:bg-gray-800">PRO MODE</button>
+            </div>
+        </header>
+
+        <!-- KPI GRID -->
+        <section class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10" id="kpiGrid"></section>
+
+        <!-- STANDINGS GRID -->
+        <h2 class="f1-font text-xl mb-6 flex items-center gap-3">
+            <span class="w-2 h-8 bg-[--f1-red] block"></span> WERELDKLASSEMENT
+        </h2>
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12" id="cardsGrid"></section>
+
+        <!-- CHARTS SECTION (Medium & Pro) -->
+        <section id="chartSection" class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <div class="glass-panel p-6">
+                <h3 class="f1-font text-sm text-[--f1-red] mb-6 uppercase">Puntenontwikkeling</h3>
+                <div id="lineChart" class="w-full h-80"></div>
+                <div id="lineLegend" class="flex flex-wrap gap-4 mt-6 text-[10px]"></div>
+            </div>
+            <div class="glass-panel p-6">
+                <h3 id="latestRoundTitle" class="f1-font text-sm text-[--f1-red] mb-6 uppercase">Ronde Resultaat</h3>
+                <div id="roundBarTable" class="space-y-4"></div>
+            </div>
+        </section>
+
+        <!-- HISTORY TABLE (Pro only) -->
+        <section id="historySection" class="hidden-mode">
+            <h2 class="f1-font text-xl mb-6 flex items-center gap-3">
+                <span class="w-2 h-8 bg-blue-600 block"></span> VOLLEDIGE TELEMETRIE (HISTORIE)
+            </h2>
+            <div class="glass-panel overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse" id="historyTable"></table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const DATA = {
+            rounds: [
+                { name: "GP Australië", totals: { "KNOAL TEMPO TEAM": 229, "WILD ROLLER COASTERS": 221, "VONCK RACING": 214, "ARJAN RACING 007": 194, "HUNTER RACING TEAM": 116, "FANNY'S RACING TEAM": 96, "MTJIRAN": 78 } },
+                { name: "GP China", totals: { "VONCK RACING": 473, "KNOAL TEMPO TEAM": 415, "ARJAN RACING 007": 411, "WILD ROLLER COASTERS": 408, "MTJIRAN": 310, "FANNY'S RACING TEAM": 289, "HUNTER RACING TEAM": 267 } },
+                { name: "GP Japan", totals: { "VONCK RACING": 623, "KNOAL TEMPO TEAM": 543, "WILD ROLLER COASTERS": 538, "ARJAN RACING 007": 517, "FANNY'S RACING TEAM": 470, "HUNTER RACING TEAM": 435, "MTJIRAN": 371 } }
+            ],
+            palette: ["#e10600", "#3671C6", "#27F4D2", "#FFF500", "#FF8700", "#5A5A5A", "#F596C8", "#00D2BE"]
+        };
+
+        // UI Mode Switcher
+        function setUIMode(mode) {
+            const chartSect = document.getElementById('chartSection');
+            const historySect = document.getElementById('historySection');
+            
+            // Buttons updaten
+            ['easy', 'medium', 'pro'].forEach(m => document.getElementById('btn-'+m).classList.remove('mode-active'));
+            document.getElementById('btn-'+mode).classList.add('mode-active');
+
+            // Secties tonen/verbergen
+            if(mode === 'easy') {
+                chartSect.classList.add('hidden-mode');
+                historySect.classList.add('hidden-mode');
+            } else if(mode === 'medium') {
+                chartSect.classList.remove('hidden-mode');
+                historySect.classList.add('hidden-mode');
+            } else {
+                chartSect.classList.remove('hidden-mode');
+                historySect.classList.remove('hidden-mode');
+            }
+        }
+
+        // --- DE LOGICA (HERGEBRUIKT & VERFIJND) ---
+        function uniqueTeams(rounds) {
+            const set = new Set();
+            rounds.forEach(r => Object.keys(r.totals).forEach(t => set.add(t)));
+            return [...set];
+        }
+
+        function sortDescByValue(mapObj) {
+            return Object.entries(mapObj).sort((a, b) => b[1] - a[1]);
+        }
+
+        function buildRoundMeta(rounds, teams) {
+            return rounds.map((round, index) => {
+                const prevTotals = index === 0 ? {} : rounds[index - 1].totals;
+                const roundScores = {};
+                teams.forEach(team => {
+                    roundScores[team] = (round.totals[team] || 0) - (prevTotals[team] || 0);
+                });
+                const cumulativeRanking = sortDescByValue(Object.fromEntries(teams.map(t => [t, round.totals[t] || 0]))).map(([team]) => team);
+                const roundRanking = sortDescByValue(roundScores).map(([team]) => team);
+                
+                const cumulativePosition = {};
+                cumulativeRanking.forEach((team, i) => cumulativePosition[team] = i + 1);
+
+                const positionChange = {};
+                if (index > 0) {
+                    const prevRanking = sortDescByValue(rounds[index-1].totals).map(([team]) => team);
+                    teams.forEach(team => {
+                        const oldPos = prevRanking.indexOf(team) + 1;
+                        const newPos = cumulativeRanking.indexOf(team) + 1;
+                        positionChange[team] = oldPos - newPos;
+                    });
+                }
+
+                return { name: round.name, totals: round.totals, roundScores, cumulativeRanking, cumulativePosition, roundRanking, positionChange };
+            });
+        }
+
+        const teams = uniqueTeams(DATA.rounds);
+        const roundMeta = buildRoundMeta(DATA.rounds, teams);
+        const lastRound = roundMeta[roundMeta.length - 1];
+        const teamColors = Object.fromEntries(lastRound.cumulativeRanking.map((team, i) => [team, DATA.palette[i % DATA.palette.length]]));
+
+        document.getElementById('pageSubtitle').textContent = `PADDOCK LIVE // STAND NA ${lastRound.name}`;
+
+        function renderKPIs() {
+            const leader = lastRound.cumulativeRanking[0];
+            const winner = lastRound.roundRanking[0];
+            
+            const kpis = [
+                { label: 'P1 Leader', val: leader, sub: lastRound.totals[leader] + ' PTS' },
+                { label: 'Round Winner', val: winner, sub: lastRound.roundScores[winner] + ' PTS' },
+                { label: 'Grid Size', val: teams.length, sub: 'Geregistreerd' },
+                { label: 'Grootste Klim', val: '▲ ' + Math.max(...Object.values(lastRound.positionChange || {x:0})), sub: 'Positiewinst' },
+                { label: 'Rondes', val: DATA.rounds.length, sub: 'Afgerond' }
+            ];
+
+            document.getElementById('kpiGrid').innerHTML = kpis.map(k => `
+                <div class="glass-panel p-4 border-b-2 border-b-[--f1-red]">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">${k.label}</p>
+                    <p class="f1-font text-lg font-bold truncate">${k.val}</p>
+                    <p class="text-[10px] text-[--f1-red] font-bold">${k.sub}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderCards() {
+            document.getElementById('cardsGrid').innerHTML = lastRound.cumulativeRanking.map((team, i) => {
+                const rank = i + 1;
+                const change = lastRound.positionChange[team] || 0;
+                const changeClass = change > 0 ? 'text-green-500' : (change < 0 ? 'text-red-500' : 'text-gray-500');
+                const changeIcon = change > 0 ? '▲' : (change < 0 ? '▼' : '•');
+
+                return `
+                    <div class="glass-panel p-5 relative overflow-hidden card-rank-${rank}">
+                        <div class="absolute right-[-10px] bottom-[-10px] f1-font text-6xl opacity-5 italic font-black">${rank}</div>
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="f1-font text-xs font-bold text-gray-500">RANK ${rank}</span>
+                            <span class="${changeClass} font-bold text-xs">${changeIcon} ${Math.abs(change)}</span>
+                        </div>
+                        <h3 class="f1-font text-md font-bold mb-1 truncate">${team}</h3>
+                        <p class="text-2xl font-black italic mb-4">${lastRound.totals[team]} <span class="text-[10px] font-normal not-italic text-gray-500">PTS</span></p>
+                        <div class="grid grid-cols-2 gap-2 text-[10px] uppercase font-bold text-gray-400">
+                            <div class="bg-black/30 p-2 rounded">Round: <span class="text-white">${lastRound.roundScores[team]}</span></div>
+                            <div class="bg-black/30 p-2 rounded">Avg: <span class="text-white">${(lastRound.totals[team]/DATA.rounds.length).toFixed(0)}</span></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderBars() {
+            const max = Math.max(...Object.values(lastRound.roundScores));
+            document.getElementById('roundBarTable').innerHTML = lastRound.roundRanking.map(team => {
+                const perc = (lastRound.roundScores[team] / max) * 100;
+                return `
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-1 font-bold uppercase">
+                            <span>${team}</span>
+                            <span>${lastRound.roundScores[team]} PTS</span>
+                        </div>
+                        <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-1000" style="width: ${perc}%; background: ${teamColors[team]}"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderLineChart() {
+            const width = 600, height = 300, padding = 40;
+            const allValues = DATA.rounds.flatMap(r => Object.values(r.totals));
+            const max = Math.max(...allValues);
+            const xStep = (width - padding * 2) / (DATA.rounds.length - 1);
+            
+            let svg = `<svg viewBox="0 0 ${width} ${height}" class="w-full h-full">`;
+            
+            // Lijnen tekenen
+            teams.forEach((team, idx) => {
+                const color = teamColors[team];
+                let points = "";
+                DATA.rounds.forEach((r, i) => {
+                    const x = padding + (i * xStep);
+                    const y = height - padding - ((r.totals[team] || 0) / max * (height - padding * 2));
+                    points += `${x},${y} `;
+                    svg += `<circle cx="${x}" cy="${y}" r="3" fill="${color}" />`;
+                });
+                svg += `<polyline points="${points}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" />`;
+            });
+            svg += `</svg>`;
+            
+            document.getElementById('lineChart').innerHTML = svg;
+            document.getElementById('lineLegend').innerHTML = teams.map(t => `
+                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background:${teamColors[t]}"></span> ${t}</div>
+            `).join('');
+        }
+
+        function renderHistory() {
+            let html = `<thead class="bg-black/50 text-[10px] uppercase tracking-wider text-gray-500"><tr><th class="p-4">Team</th>`;
+            DATA.rounds.forEach(r => html += `<th class="p-4 text-center">${r.name}</th>`);
+            html += `</tr></thead><tbody>`;
+            
+            lastRound.cumulativeRanking.forEach(team => {
+                html += `<tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <td class="p-4 font-bold text-xs">${team}</td>`;
+                DATA.rounds.forEach(r => {
+                    html += `<td class="p-4 text-center text-xs">
+                        <div class="font-bold">${r.totals[team]}</div>
+                        <div class="text-[9px] text-gray-500">PTS</div>
+                    </td>`;
+                });
+                html += `</tr>`;
+            });
+            html += `</tbody>`;
+            document.getElementById('historyTable').innerHTML = html;
+        }
+
+        // Init
+        renderKPIs();
+        renderCards();
+        renderBars();
+        renderLineChart();
+        renderHistory();
+        setUIMode('medium'); // Default naar Medium
+
+    </script>
+</body>
+</html>
