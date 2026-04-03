@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cashflow Champions | F1 Manager Stats</title>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <title>Cashflow Champions | Pro F1 Manager Stats</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -15,7 +14,6 @@
             --f1-glass: rgba(255, 255, 255, 0.05);
             --f1-border: rgba(255, 255, 255, 0.1);
         }
-
         body {
             background-color: var(--f1-black);
             color: white;
@@ -23,81 +21,70 @@
             background-image: radial-gradient(circle at top right, #1a202c, #0b0e11);
             min-height: 100vh;
         }
-
         .f1-font { font-family: 'Orbitron', sans-serif; }
-        
         .glass-panel {
             background: var(--f1-glass);
             backdrop-filter: blur(12px);
             border: 1px solid var(--f1-border);
-            border-radius: 12px;
+            border-radius: 16px;
         }
-
-        .card-rank-1 { border-left: 4px solid #ffd700; background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent); }
-        .card-rank-2 { border-left: 4px solid #c0c0c0; }
-        .card-rank-3 { border-left: 4px solid #cd7f32; }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--f1-black); }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--f1-red); }
-
-        .mode-active { background-color: var(--f1-red) !important; color: white !important; }
-        
+        .card-rank-1 { border-top: 4px solid #ffd700; background: linear-gradient(180deg, rgba(255,215,0,0.05), transparent); }
+        .mode-active { background-color: var(--f1-red) !important; color: white !important; box-shadow: 0 0 15px rgba(225, 6, 0, 0.4); }
         .hidden-mode { display: none !important; }
+        .table-cell-highlight { background: rgba(255,255,255,0.03); }
+        tr:hover td { background: rgba(225, 6, 0, 0.05); }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
     <div class="max-w-7xl mx-auto">
-        <!-- HEADER SECTION -->
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
+        <!-- HEADER -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
             <div>
-                <h1 class="f1-font text-4xl md:text-5xl font-black italic tracking-tighter">
+                <h1 class="f1-font text-3xl md:text-5xl font-black italic tracking-tighter uppercase">
                     CASHFLOW <span class="text-[--f1-red]">CHAMPIONS</span>
                 </h1>
-                <p id="pageSubtitle" class="text-gray-400 mt-2 uppercase tracking-[0.2em] text-xs font-bold">Laden van paddock data...</p>
+                <p id="pageSubtitle" class="text-gray-400 mt-2 tracking-[0.3em] text-[10px] font-bold uppercase"></p>
             </div>
 
             <!-- MODE SELECTOR -->
-            <div class="flex bg-gray-900 p-1 rounded-full border border-gray-700 shadow-xl">
-                <button onclick="setUIMode('easy')" id="btn-easy" class="px-6 py-2 rounded-full text-xs font-bold transition-all hover:bg-gray-800">EASY</button>
-                <button onclick="setUIMode('medium')" id="btn-medium" class="px-6 py-2 rounded-full text-xs font-bold transition-all hover:bg-gray-800 mode-active">MEDIUM</button>
-                <button onclick="setUIMode('pro')" id="btn-pro" class="px-6 py-2 rounded-full text-xs font-bold transition-all hover:bg-gray-800">PRO MODE</button>
+            <div class="flex bg-gray-900 p-1 rounded-xl border border-gray-700 shadow-2xl">
+                <button onclick="setUIMode('easy')" id="btn-easy" class="px-5 py-2 rounded-lg text-[10px] font-black tracking-widest transition-all">EASY</button>
+                <button onclick="setUIMode('medium')" id="btn-medium" class="px-5 py-2 rounded-lg text-[10px] font-black tracking-widest transition-all">MEDIUM</button>
+                <button onclick="setUIMode('pro')" id="btn-pro" class="px-5 py-2 rounded-lg text-[10px] font-black tracking-widest transition-all">PRO MODE</button>
             </div>
         </header>
 
-        <!-- KPI GRID -->
+        <!-- KPI GRID (Snel-statistieken uit versie 1) -->
         <section class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10" id="kpiGrid"></section>
 
-        <!-- STANDINGS GRID -->
-        <h2 class="f1-font text-xl mb-6 flex items-center gap-3">
-            <span class="w-2 h-8 bg-[--f1-red] block"></span> WERELDKLASSEMENT
+        <!-- TEAM CARDS -->
+        <h2 class="f1-font text-sm mb-6 flex items-center gap-3 tracking-widest text-gray-500">
+            <span class="w-10 h-[2px] bg-[--f1-red]"></span> LIVE STANDING
         </h2>
         <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12" id="cardsGrid"></section>
 
-        <!-- CHARTS SECTION (Medium & Pro) -->
+        <!-- CHARTS SECTION -->
         <section id="chartSection" class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
             <div class="glass-panel p-6">
-                <h3 class="f1-font text-sm text-[--f1-red] mb-6 uppercase">Puntenontwikkeling</h3>
-                <div id="lineChart" class="w-full h-80"></div>
-                <div id="lineLegend" class="flex flex-wrap gap-4 mt-6 text-[10px]"></div>
+                <h3 class="f1-font text-xs text-[--f1-red] mb-6 tracking-widest uppercase">Performance Trend (Cumulatief)</h3>
+                <div id="lineChart" class="w-full h-72"></div>
+                <div id="lineLegend" class="flex flex-wrap gap-3 mt-6 text-[9px] uppercase font-bold text-gray-500"></div>
             </div>
             <div class="glass-panel p-6">
-                <h3 id="latestRoundTitle" class="f1-font text-sm text-[--f1-red] mb-6 uppercase">Ronde Resultaat</h3>
+                <h3 id="latestRoundTitle" class="f1-font text-xs text-[--f1-red] mb-6 tracking-widest uppercase"></h3>
                 <div id="roundBarTable" class="space-y-4"></div>
             </div>
         </section>
 
-        <!-- HISTORY TABLE (Pro only) -->
+        <!-- HISTORY TABLE (Alle data uit versie 1) -->
         <section id="historySection" class="hidden-mode">
-            <h2 class="f1-font text-xl mb-6 flex items-center gap-3">
-                <span class="w-2 h-8 bg-blue-600 block"></span> VOLLEDIGE TELEMETRIE (HISTORIE)
+            <h2 class="f1-font text-sm mb-6 flex items-center gap-3 tracking-widest text-gray-500">
+                <span class="w-10 h-[2px] bg-blue-600"></span> FULL TELEMETRY HISTORY
             </h2>
             <div class="glass-panel overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm border-collapse" id="historyTable"></table>
+                    <table class="w-full text-left text-[11px] border-collapse" id="historyTable"></table>
                 </div>
             </div>
         </section>
@@ -113,193 +100,151 @@
             palette: ["#e10600", "#3671C6", "#27F4D2", "#FFF500", "#FF8700", "#5A5A5A", "#F596C8", "#00D2BE"]
         };
 
-        // UI Mode Switcher
-        function setUIMode(mode) {
-            const chartSect = document.getElementById('chartSection');
-            const historySect = document.getElementById('historySection');
-            
-            // Buttons updaten
-            ['easy', 'medium', 'pro'].forEach(m => document.getElementById('btn-'+m).classList.remove('mode-active'));
-            document.getElementById('btn-'+mode).classList.add('mode-active');
-
-            // Secties tonen/verbergen
-            if(mode === 'easy') {
-                chartSect.classList.add('hidden-mode');
-                historySect.classList.add('hidden-mode');
-            } else if(mode === 'medium') {
-                chartSect.classList.remove('hidden-mode');
-                historySect.classList.add('hidden-mode');
-            } else {
-                chartSect.classList.remove('hidden-mode');
-                historySect.classList.remove('hidden-mode');
-            }
-        }
-
-        // --- DE LOGICA (HERGEBRUIKT & VERFIJND) ---
-        function uniqueTeams(rounds) {
-            const set = new Set();
-            rounds.forEach(r => Object.keys(r.totals).forEach(t => set.add(t)));
-            return [...set];
-        }
-
-        function sortDescByValue(mapObj) {
-            return Object.entries(mapObj).sort((a, b) => b[1] - a[1]);
-        }
-
-        function buildRoundMeta(rounds, teams) {
-            return rounds.map((round, index) => {
-                const prevTotals = index === 0 ? {} : rounds[index - 1].totals;
-                const roundScores = {};
-                teams.forEach(team => {
-                    roundScores[team] = (round.totals[team] || 0) - (prevTotals[team] || 0);
-                });
-                const cumulativeRanking = sortDescByValue(Object.fromEntries(teams.map(t => [t, round.totals[t] || 0]))).map(([team]) => team);
-                const roundRanking = sortDescByValue(roundScores).map(([team]) => team);
+        const teams = [...new Set(DATA.rounds.flatMap(r => Object.keys(r.totals)))];
+        
+        function buildExtendedMeta() {
+            return DATA.rounds.map((round, idx) => {
+                const prev = idx > 0 ? DATA.rounds[idx-1].totals : {};
+                const rScores = {};
+                teams.forEach(t => rScores[t] = (round.totals[t] || 0) - (prev[t] || 0));
                 
-                const cumulativePosition = {};
-                cumulativeRanking.forEach((team, i) => cumulativePosition[team] = i + 1);
+                const cRank = Object.entries(round.totals).sort((a,b) => b[1] - a[1]);
+                const rRank = Object.entries(rScores).sort((a,b) => b[1] - a[1]);
+                
+                const posMap = {};
+                cRank.forEach(([t], i) => posMap[t] = i + 1);
 
-                const positionChange = {};
-                if (index > 0) {
-                    const prevRanking = sortDescByValue(rounds[index-1].totals).map(([team]) => team);
-                    teams.forEach(team => {
-                        const oldPos = prevRanking.indexOf(team) + 1;
-                        const newPos = cumulativeRanking.indexOf(team) + 1;
-                        positionChange[team] = oldPos - newPos;
-                    });
+                const change = {};
+                if(idx > 0) {
+                    const prevRank = Object.entries(DATA.rounds[idx-1].totals).sort((a,b) => b[1] - a[1]).map(e => e[0]);
+                    teams.forEach(t => change[t] = (prevRank.indexOf(t) + 1) - (posMap[t]));
                 }
 
-                return { name: round.name, totals: round.totals, roundScores, cumulativeRanking, cumulativePosition, roundRanking, positionChange };
+                return { name: round.name, totals: round.totals, rScores, cRank, rRank, posMap, change };
             });
         }
 
-        const teams = uniqueTeams(DATA.rounds);
-        const roundMeta = buildRoundMeta(DATA.rounds, teams);
-        const lastRound = roundMeta[roundMeta.length - 1];
-        const teamColors = Object.fromEntries(lastRound.cumulativeRanking.map((team, i) => [team, DATA.palette[i % DATA.palette.length]]));
+        const meta = buildExtendedMeta();
+        const last = meta[meta.length - 1];
+        const teamColors = Object.fromEntries(last.cRank.map(([t], i) => [t, DATA.palette[i % DATA.palette.length]]));
 
-        document.getElementById('pageSubtitle').textContent = `PADDOCK LIVE // STAND NA ${lastRound.name}`;
+        function setUIMode(mode) {
+            ['easy', 'medium', 'pro'].forEach(m => document.getElementById('btn-'+m).classList.remove('mode-active'));
+            document.getElementById('btn-'+mode).classList.add('mode-active');
+            document.getElementById('chartSection').className = (mode === 'easy') ? 'hidden-mode' : 'grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12';
+            document.getElementById('historySection').className = (mode === 'pro') ? '' : 'hidden-mode';
+        }
 
         function renderKPIs() {
-            const leader = lastRound.cumulativeRanking[0];
-            const winner = lastRound.roundRanking[0];
+            const leader = last.cRank[0];
+            const leaderGap = leader[1] - last.cRank[1][1];
+            const roundWinner = last.rRank[0];
             
+            // Zoek spannendste duel
+            let tightGap = 999, duel = "";
+            for(let i=0; i<last.cRank.length-1; i++) {
+                let g = last.cRank[i][1] - last.cRank[i+1][1];
+                if(g < tightGap) { tightGap = g; duel = `${last.cRank[i][0]} vs ${last.cRank[i+1][0]}`; }
+            }
+
             const kpis = [
-                { label: 'P1 Leader', val: leader, sub: lastRound.totals[leader] + ' PTS' },
-                { label: 'Round Winner', val: winner, sub: lastRound.roundScores[winner] + ' PTS' },
-                { label: 'Grid Size', val: teams.length, sub: 'Geregistreerd' },
-                { label: 'Grootste Klim', val: '▲ ' + Math.max(...Object.values(lastRound.positionChange || {x:0})), sub: 'Positiewinst' },
-                { label: 'Rondes', val: DATA.rounds.length, sub: 'Afgerond' }
+                { l: 'P1 Leader', v: leader[0], s: `${leader[1]} PTS (+${leaderGap})` },
+                { l: 'Round Winner', v: roundWinner[0], s: `${roundWinner[1]} PTS deze ronde` },
+                { l: 'Spannendste Duel', v: `${tightGap} PTS Gap`, s: duel },
+                { l: 'Grootste Klim', v: `▲ ${Math.max(...Object.values(last.change || {x:0})) || 0}`, s: 'Posities gestegen' },
+                { l: 'Rondes', v: DATA.rounds.length, s: `Laatste: ${last.name}` }
             ];
 
             document.getElementById('kpiGrid').innerHTML = kpis.map(k => `
-                <div class="glass-panel p-4 border-b-2 border-b-[--f1-red]">
-                    <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest">${k.label}</p>
-                    <p class="f1-font text-lg font-bold truncate">${k.val}</p>
-                    <p class="text-[10px] text-[--f1-red] font-bold">${k.sub}</p>
+                <div class="glass-panel p-4 border-l-2 border-l-[--f1-red]">
+                    <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest mb-1">${k.l}</p>
+                    <p class="f1-font text-sm font-bold truncate">${k.v}</p>
+                    <p class="text-[9px] text-gray-400 mt-1">${k.s}</p>
                 </div>
             `).join('');
         }
 
-        function renderCards() {
-            document.getElementById('cardsGrid').innerHTML = lastRound.cumulativeRanking.map((team, i) => {
-                const rank = i + 1;
-                const change = lastRound.positionChange[team] || 0;
-                const changeClass = change > 0 ? 'text-green-500' : (change < 0 ? 'text-red-500' : 'text-gray-500');
-                const changeIcon = change > 0 ? '▲' : (change < 0 ? '▼' : '•');
-
-                return `
-                    <div class="glass-panel p-5 relative overflow-hidden card-rank-${rank}">
-                        <div class="absolute right-[-10px] bottom-[-10px] f1-font text-6xl opacity-5 italic font-black">${rank}</div>
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="f1-font text-xs font-bold text-gray-500">RANK ${rank}</span>
-                            <span class="${changeClass} font-bold text-xs">${changeIcon} ${Math.abs(change)}</span>
-                        </div>
-                        <h3 class="f1-font text-md font-bold mb-1 truncate">${team}</h3>
-                        <p class="text-2xl font-black italic mb-4">${lastRound.totals[team]} <span class="text-[10px] font-normal not-italic text-gray-500">PTS</span></p>
-                        <div class="grid grid-cols-2 gap-2 text-[10px] uppercase font-bold text-gray-400">
-                            <div class="bg-black/30 p-2 rounded">Round: <span class="text-white">${lastRound.roundScores[team]}</span></div>
-                            <div class="bg-black/30 p-2 rounded">Avg: <span class="text-white">${(lastRound.totals[team]/DATA.rounds.length).toFixed(0)}</span></div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+        function buildSparkline(team) {
+            const history = DATA.rounds.map(r => r.totals[team] || 0);
+            const min = Math.min(...history), max = Math.max(...history);
+            const pts = history.map((v, i) => `${(i/(history.length-1))*100},${100 - ((v-min)/(max-min || 1)*100)}`).join(' ');
+            return `<svg viewBox="0 0 100 100" class="w-full h-10 mt-2 opacity-50"><polyline fill="none" stroke="${teamColors[team]}" stroke-width="6" points="${pts}"/></svg>`;
         }
 
-        function renderBars() {
-            const max = Math.max(...Object.values(lastRound.roundScores));
-            document.getElementById('roundBarTable').innerHTML = lastRound.roundRanking.map(team => {
-                const perc = (lastRound.roundScores[team] / max) * 100;
+        function renderCards() {
+            document.getElementById('cardsGrid').innerHTML = last.cRank.map(([team, score], i) => {
+                const rPoints = last.rScores[team];
+                const avg = (score / DATA.rounds.length).toFixed(1);
+                const best = Math.max(...meta.map(m => m.rScores[team]));
+                const change = last.change[team] || 0;
+
                 return `
-                    <div>
-                        <div class="flex justify-between text-[10px] mb-1 font-bold uppercase">
-                            <span>${team}</span>
-                            <span>${lastRound.roundScores[team]} PTS</span>
+                    <div class="glass-panel p-5 relative overflow-hidden ${i===0?'card-rank-1':''}">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="f1-font text-[10px] text-[--f1-red]">POS ${i+1}</span>
+                            <span class="text-[10px] font-bold ${change>=0?'text-green-500':'text-red-500'}">${change>0?'▲':(change<0?'▼':'•')} ${Math.abs(change)}</span>
                         </div>
-                        <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
-                            <div class="h-full rounded-full transition-all duration-1000" style="width: ${perc}%; background: ${teamColors[team]}"></div>
+                        <h3 class="f1-font text-sm font-bold mb-1 truncate uppercase">${team}</h3>
+                        <p class="text-3xl font-black italic mb-4">${score} <span class="text-[10px] font-normal not-italic text-gray-500 tracking-widest">PTS</span></p>
+                        
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-2 mb-4 text-[9px] uppercase font-bold">
+                            <div class="text-gray-500">Ronde: <span class="text-white">${rPoints}</span></div>
+                            <div class="text-gray-500">Beste: <span class="text-white">${best}</span></div>
+                            <div class="text-gray-500">Gem: <span class="text-white">${avg}</span></div>
                         </div>
+                        ${buildSparkline(team)}
                     </div>
                 `;
             }).join('');
         }
 
         function renderLineChart() {
-            const width = 600, height = 300, padding = 40;
-            const allValues = DATA.rounds.flatMap(r => Object.values(r.totals));
-            const max = Math.max(...allValues);
-            const xStep = (width - padding * 2) / (DATA.rounds.length - 1);
-            
+            const width = 800, height = 300, pad = 40;
+            const max = Math.max(...DATA.rounds.flatMap(r => Object.values(r.totals)));
             let svg = `<svg viewBox="0 0 ${width} ${height}" class="w-full h-full">`;
             
-            // Lijnen tekenen
-            teams.forEach((team, idx) => {
-                const color = teamColors[team];
-                let points = "";
-                DATA.rounds.forEach((r, i) => {
-                    const x = padding + (i * xStep);
-                    const y = height - padding - ((r.totals[team] || 0) / max * (height - padding * 2));
-                    points += `${x},${y} `;
-                    svg += `<circle cx="${x}" cy="${y}" r="3" fill="${color}" />`;
-                });
-                svg += `<polyline points="${points}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" />`;
+            teams.forEach(team => {
+                let pts = DATA.rounds.map((r, i) => `${pad + (i * (width-pad*2)/(DATA.rounds.length-1))},${height-pad - ((r.totals[team]/max)*(height-pad*2))}`).join(' ');
+                svg += `<polyline points="${pts}" fill="none" stroke="${teamColors[team]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`;
             });
             svg += `</svg>`;
-            
             document.getElementById('lineChart').innerHTML = svg;
-            document.getElementById('lineLegend').innerHTML = teams.map(t => `
-                <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full" style="background:${teamColors[t]}"></span> ${t}</div>
+            document.getElementById('lineLegend').innerHTML = last.cRank.map(([t]) => `<div class="flex items-center gap-1"><span class="w-2 h-2" style="background:${teamColors[t]}"></span>${t}</div>`).join('');
+        }
+
+        function renderBars() {
+            document.getElementById('latestRoundTitle').textContent = `Rondepunten ${last.name}`;
+            const max = Math.max(...Object.values(last.rScores));
+            document.getElementById('roundBarTable').innerHTML = last.rRank.map(([t, s]) => `
+                <div class="text-[10px]">
+                    <div class="flex justify-between font-bold mb-1 uppercase tracking-tighter"><span>${t}</span><span>${s} PTS</span></div>
+                    <div class="w-full bg-gray-800 h-1 rounded-full"><div class="h-full bg-[--f1-red]" style="width:${(s/max)*100}%; background:${teamColors[t]}"></div></div>
+                </div>
             `).join('');
         }
 
         function renderHistory() {
-            let html = `<thead class="bg-black/50 text-[10px] uppercase tracking-wider text-gray-500"><tr><th class="p-4">Team</th>`;
-            DATA.rounds.forEach(r => html += `<th class="p-4 text-center">${r.name}</th>`);
-            html += `</tr></thead><tbody>`;
+            let html = `<thead><tr class="bg-black/40 uppercase tracking-widest text-gray-500"><th class="p-4 border-b border-gray-800">Team</th>`;
+            DATA.rounds.forEach(r => html += `<th colspan="3" class="p-4 text-center border-b border-gray-800 border-l border-gray-800">${r.name}</th>`);
+            html += `</tr><tr class="bg-black/20 text-[9px] text-gray-500"><th></th>`;
+            DATA.rounds.forEach(() => html += `<th class="p-2 border-l border-gray-800">PTS</th><th class="p-2">POS</th><th class="p-2">TOT</th>`);
+            html += `</tr></thead><tbody class="divide-y divide-gray-800">`;
             
-            lastRound.cumulativeRanking.forEach(team => {
-                html += `<tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                    <td class="p-4 font-bold text-xs">${team}</td>`;
-                DATA.rounds.forEach(r => {
-                    html += `<td class="p-4 text-center text-xs">
-                        <div class="font-bold">${r.totals[team]}</div>
-                        <div class="text-[9px] text-gray-500">PTS</div>
-                    </td>`;
+            last.cRank.forEach(([team]) => {
+                html += `<tr><td class="p-4 font-bold text-gray-300 uppercase">${team}</td>`;
+                meta.forEach(m => {
+                    html += `<td class="p-4 text-center table-cell-highlight">${m.rScores[team]}</td>
+                             <td class="p-4 text-center text-gray-500">#${Object.keys(m.totals).sort((a,b)=>m.totals[b]-m.totals[a]).indexOf(team)+1}</td>
+                             <td class="p-4 text-center font-bold">${m.totals[team]}</td>`;
                 });
                 html += `</tr>`;
             });
-            html += `</tbody>`;
-            document.getElementById('historyTable').innerHTML = html;
+            document.getElementById('historyTable').innerHTML = html + `</tbody>`;
         }
 
-        // Init
-        renderKPIs();
-        renderCards();
-        renderBars();
-        renderLineChart();
-        renderHistory();
-        setUIMode('medium'); // Default naar Medium
-
+        document.getElementById('pageSubtitle').textContent = `Paddock Data Feed // Ronde ${DATA.rounds.length} // Status: OK`;
+        renderKPIs(); renderCards(); renderLineChart(); renderBars(); renderHistory();
+        setUIMode('medium');
     </script>
 </body>
 </html>
